@@ -1,0 +1,42 @@
+/* styles.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+
+.bg-card {
+  background-color: white; 
+
+}
+
+@keyframes slide-in {
+  from {
+    transform: translateY(-10%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes slide-out {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-10%);
+  }
+}
+
+::view-transition-old(settings-panel) {
+  animation: slide-out 300ms ease-in-out;
+}
+
+::view-transition-new(settings-panel) {
+  animation: slide-in 300ms ease-in-out;
+}
+
+/* Make the view transitions work with React */
+::view-transition-group(settings-panel) {
+  animation-duration: 300ms;
+}
