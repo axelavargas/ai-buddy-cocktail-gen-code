@@ -12,18 +12,12 @@ import { Label } from "@/components/ui/label";
 import { Instructions } from './components/Instructions';
 import { AISettings } from './components/AISettings';
 import { UserInput } from './components/UserInput';
-import { getCocktailListBasedOnIngredients } from './Api';
+import { getCocktailListBasedOnIngredients, getCocktailRecipe, getRecommendedCocktail } from './Api';
+import { Configuration } from './types';
 
-interface Configuration {
-  apiKey: string;
-  apiKeyInput: string;
-  temperature: number;
-  maxTokens: number;
-  model: string;
-}
 
 function App() {
-  const DEFAULT_API_KEY = "";
+  const DEFAULT_API_KEY = "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";
   const DEFAULT_TEMPERATURE = 0.5;
   const DEFAULT_MAX_TOKENS = 256;
   const DEFAULT_MODEL = "gpt-3.5-turbo";
@@ -57,6 +51,14 @@ function App() {
 
       // TODO: Call OpenAI to generate the cocktail recipe based on the mood and ingredients
 
+      const recommendedCocktail = await getRecommendedCocktail(mood, cocktails, configuration);
+
+      console.log("Recommended cocktail: ", recommendedCocktail);
+
+      // Once the cocktail is selected from the list, get coctail recipe from CocktailDB
+
+      const cocktailRecipe = await getCocktailRecipe(recommendedCocktail.idDrink);
+      console.log("Cocktail recipe: ", cocktailRecipe);
 
       // TODO: Set the generated cocktail recipe to the state
 
@@ -94,7 +96,7 @@ function App() {
     } finally {
       setLoading(false);
     }
-  }, [configuration.apiKey, mood, selectedIngredients]);
+  }, [configuration, mood, selectedIngredients]);
 
   const resetForm = useCallback(() => {
     setMood("");

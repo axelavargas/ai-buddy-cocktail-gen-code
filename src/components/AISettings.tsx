@@ -16,7 +16,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 
-const MODELS = ["gpt-3.5-turbo", "gpt-4", "gpt-4o"] as const;
+const MODELS = ["gpt-3.5-turbo-1106", "gpt-4", "gpt-4o mini"] as const;
 const MIN_TEMPERATURE = 0;
 const MAX_TEMPERATURE = 2;
 const MIN_TOKENS = 1;
