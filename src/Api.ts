@@ -8,6 +8,7 @@ export interface Drink {
   strDrink: string;
   strDrinkThumb: string;
   strInstructions: string;
+  [key: string]: string | null;
 }
 
 export interface APIResponse {
@@ -71,8 +72,9 @@ async function getMultipleIngredientsCocktails(ingredients: string[]): Promise<D
 
 
 function getMessages(mood: string, cocktails: Drink[]) {
-  const DEFAULT_PROMPT = "You are a bartender creating a cocktail recipe for a customer. your main goal is to recommend a cocktail based on a list of cocktails te customer give you, do not create the recipe, just give the cocktail idDrink and the reason why is suiting. Return a json with the idDrink and the reason.";
-  const MOOD_COCKTAIL_PROMPT = `craft a cocktail recipe for a customer who is feeling ${mood}. They have the ingredients to make the following cocktails: ${cocktails.map(cocktail => cocktail.strDrink).join(", ")}.`;
+  const DEFAULT_PROMPT = "You are a expert bartender creating a cocktail recipe for a customer based on how they feel. your main goal is to recommend a cocktail based on a list of cocktails the user gives you. The customer is only interested in the cocktails provided in the list. You must return a valid json with the following structure: {\"idDrink\": \"idDrink\", \"reason\": \"reason\"}";
+  const list = cocktails.map(cocktail => `idDrink: ${cocktail.idDrink} - nameDrink: ${cocktail.strDrink}`).join(", ");
+  const MOOD_COCKTAIL_PROMPT = `From the following list recommend a cocktail for someone who is feeling ${mood}: ${list}`;
   return [
     {
       role: 'system',
@@ -85,43 +87,108 @@ function getMessages(mood: string, cocktails: Drink[]) {
   ]
 }
 
-export async function getRecommendedCocktail(mood: string, cocktails: Drink[], configuration: Configuration): Promise<{ idDrink: string, reason: string }> {
+export async function getRecommendedCocktail(mood: string, cocktails: Drink[], configuration: Configuration): Promise<{ idDrink: string, reason: string, recipe: string }> {
 
+  try {
+    // Call OpenAI API to generate the cocktail recipe
+    // TODO: Is it possible to call the cocktail DB API to get the recipe?
+    const response = await fetch(OPENAI_API_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${configuration.apiKey}`,
+      },
+      body: JSON.stringify({
+        max_tokens: configuration.maxTokens,// deprecated
+        temperature: configuration.temperature,
+        model: configuration.model,
+        messages: [...getMessages(mood, cocktails)],
+        response_format: {
+          type: 'json_schema',
+          json_schema: {
+            name: "cocktail_recommendation",
+            strict: true,
+            schema: {
+              type: 'object',
+              properties: {
+                idDrink: {
+                  type: 'string',
+                  description: 'The id of the drink to recommend',
+                },
+                reason: {
+                  type: 'string',
+                  description: 'The reason for the recommendation'
+                },
+              },
+              required: ['idDrink', 'reason'],
+              additionalProperties: false,
+            },
+          },
+        },
+      }),
+    });
 
-  // Call OpenAI API to generate the cocktail recipe
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
 
-  const response = await fetch(OPENAI_API_URL, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${configuration.apiKey}`,
-    },
-    body: JSON.stringify({
-      max_tokens: configuration.maxTokens,// deprecated
-      temperature: configuration.temperature,
-      model: configuration.model,
-      messages: [...getMessages(mood, cocktails)],
-    }),
-  });
-
-  if (response.ok) {
     const data = await response.json();
-    return data.choices[0].message.content;
+    const recomendation = JSON.parse(data.choices[0].message.content);
+
+    // Then fetch the recipe from the cocktail DB
+    const recipeDetails = await getCocktailRecipe(recomendation.idDrink);
+
+    return {
+      idDrink: recomendation.idDrink,
+      reason: recomendation.reason,
+      recipe: recipeDetails,
+    };
+  } catch (error) {
+    console.error("Error generating cocktail recipe:", error);
+    return { idDrink: "", reason: "", recipe: "" };
   }
-
-  console.error('Error fetching recommended cocktail:', response.statusText);
-
-  return { idDrink: "", reason: "" };
-
 }
 
 
 export async function getCocktailRecipe(idDrink: string): Promise<string> {
   try {
-    const response = await fetch(`${API_BASE_URL}/filter.php?i=${idDrink}`);
+    const response = await fetch(`${API_BASE_URL}/lookup.php?i=${idDrink}`);
     const data: APIResponse = await response.json();
     const drink = data.drinks?.[0];
-    return drink?.strInstructions || "";
+
+    if (!drink) {
+      return "";
+    }
+
+    // Get all ingredients and their measurements
+    const ingredients: string[] = [];
+    // from the API ingredients are stored in strIngredient1, strIngredient2, ..., strIngredient15
+    for (let i = 1; i <= 15; i++) {
+      const ingredient = drink[`strIngredient${i}`];
+      const measure = drink[`strMeasure${i}`];
+
+      if (ingredient) {
+        const formattedMeasure = measure ? measure.trim() : "";
+        const formattedIngredient = ingredient.trim();
+        ingredients.push(
+          formattedMeasure
+            ? `${formattedMeasure} ${formattedIngredient}`
+            : formattedIngredient
+        );
+      }
+    }
+
+    // Format the recipe
+    const recipe = [
+      "Ingredients:",
+      ...ingredients.map(ing => `- ${ing}`),
+      "",
+      "Instructions:",
+      drink.strInstructions
+    ].join("\n");
+
+    return recipe;
+
   } catch (error) {
     console.error(`Error fetching cocktail recipe for ${idDrink}:`, error);
     return "";
