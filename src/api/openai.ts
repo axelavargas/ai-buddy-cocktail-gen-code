@@ -52,6 +52,9 @@ export async function getRecommendedCocktailV0(
       model: configuration.model,
       max_tokens: configuration.maxTokens,
       messages: [...getMessages(mood, cocktails)],
+      response_format: {
+        type: "json_object",
+      },
     }),
   });
 
