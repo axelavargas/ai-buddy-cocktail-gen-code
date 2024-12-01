@@ -7,11 +7,12 @@ import { Label } from "@/components/ui/label";
 import { Instructions } from "./components/Instructions";
 import { AISettings } from "./components/AISettings";
 import { UserInput } from "./components/UserInput";
-import {
-  getCocktailListBasedOnIngredients,
-  getRecommendedCocktail,
-} from "./Api";
 import { Configuration } from "./types";
+import { getCocktailListBasedOnIngredients } from "./api/cocktaildb";
+import {
+  getRecommendedCocktailV0,
+  getRecommendedCocktailV1,
+} from "./api/openai";
 
 function App() {
   const DEFAULT_API_KEY =
@@ -48,8 +49,8 @@ function App() {
       console.log("Cocktails based on ingredients: ", cocktails);
 
       //Call OpenAI to generate the cocktail recipe based on the mood and ingredients
-
-      const recommendedCocktail = await getRecommendedCocktail(
+      const recommendedCocktail = await getRecommendedCocktailV0(
+        // const recommendedCocktail = await getRecommendedCocktailV0(
         mood,
         cocktails,
         configuration,
