@@ -1,23 +1,21 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback } from "react";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Instructions } from './components/Instructions';
-import { AISettings } from './components/AISettings';
-import { UserInput } from './components/UserInput';
-import { getCocktailListBasedOnIngredients, getRecommendedCocktail } from './Api';
-import { Configuration } from './types';
-
+import { Instructions } from "./components/Instructions";
+import { AISettings } from "./components/AISettings";
+import { UserInput } from "./components/UserInput";
+import {
+  getCocktailListBasedOnIngredients,
+  getRecommendedCocktail,
+} from "./Api";
+import { Configuration } from "./types";
 
 function App() {
-  const DEFAULT_API_KEY = "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";
+  const DEFAULT_API_KEY =
+    "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";
   const DEFAULT_TEMPERATURE = 0.5;
   const DEFAULT_MAX_TOKENS = 256;
   const DEFAULT_MODEL = "gpt-4o-mini";
@@ -44,15 +42,18 @@ function App() {
     }
     setLoading(true);
     try {
-
-      // TODO: Call CocktailDB to get the list of cocktails based on the ingredients
-      const cocktails = await getCocktailListBasedOnIngredients(selectedIngredients);
+      //Call CocktailDB to get the list of cocktails based on the ingredients
+      const cocktails =
+        await getCocktailListBasedOnIngredients(selectedIngredients);
       console.log("Cocktails based on ingredients: ", cocktails);
 
-      // TODO: Call OpenAI to generate the cocktail recipe based on the mood and ingredients
+      //Call OpenAI to generate the cocktail recipe based on the mood and ingredients
 
-      const recommendedCocktail = await getRecommendedCocktail(mood, cocktails, configuration);
-
+      const recommendedCocktail = await getRecommendedCocktail(
+        mood,
+        cocktails,
+        configuration,
+      );
 
       console.log("Recommended cocktail: ", recommendedCocktail);
 
@@ -64,12 +65,11 @@ function App() {
         ${recommendedCocktail.recipe}`;
       });
 
-
       // // Simulate API call for demo
       // await new Promise(resolve => setTimeout(resolve, 2000));
       //
-      // // Mock response - 
-      // const MockResponse = `🍸 Mood Lifter Margarita 
+      // // Mock response -
+      // const MockResponse = `🍸 Mood Lifter Margarita
       //   Perfect for your current mood, here's a refreshing twist on the classic Margarita.
       //
       //   Ingredients:
@@ -92,7 +92,6 @@ function App() {
       //
       // setGeneratedCocktail(MockResponse);
       // console.log("Your perfect cocktail has been crafted!");
-
     } catch (error) {
       console.error("Failed to generate cocktail recommendation", error);
     } finally {
@@ -153,11 +152,7 @@ function App() {
                 disabled={loading}
                 className="w-full"
               >
-                {loading ? (
-                  <>Crafting...</>
-                ) : (
-                  <>Craft Cocktail</>
-                )}
+                {loading ? <>Crafting...</> : <>Craft Cocktail</>}
               </Button>
 
               <Button
@@ -193,7 +188,7 @@ function App() {
           </div>
         </div>
       </div>
-    </div >
+    </div>
   );
 }
 

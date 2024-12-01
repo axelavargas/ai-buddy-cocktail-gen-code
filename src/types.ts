@@ -1,4 +1,3 @@
-
 export interface Configuration {
   apiKey: string;
   apiKeyInput: string;

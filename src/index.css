@@ -3,11 +3,8 @@
 @tailwind components;
 @tailwind utilities;
 
-
-
 .bg-card {
-  background-color: white; 
-
+  background-color: white;
 }
 
 @keyframes slide-in {

@@ -16,9 +16,7 @@ export function Instructions() {
         <h1 className="text-4xl font-bold text-gradient bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-pink-600">
           Mood Based Cocktail Buddy
         </h1>
-        <p className="text-lg text-muted-foreground">
-          Gen AI Playground
-        </p>
+        <p className="text-lg text-muted-foreground">Gen AI Playground</p>
       </div>
 
       {/* Main Content Card */}
@@ -31,18 +29,19 @@ export function Instructions() {
         </CardHeader>
         <CardContent className="space-y-4">
           <p className="text-lg leading-relaxed">
-            There is a big alcohol cabinet on your house, friend's house or hotel
-            minibar. Considering your mood as an input and the ingredients you
-            find in that cabinet, we'll help you create the perfect cocktail using
-            OpenAI API and CocktailDB API.
+            There is a big alcohol cabinet on your house, friend's house or
+            hotel minibar. Considering your mood as an input and the ingredients
+            you find in that cabinet, we'll help you create the perfect cocktail
+            using OpenAI API and CocktailDB API.
           </p>
 
           {/* Safety Alert */}
           <Alert variant="default" className="border-amber-500">
             <AlertTriangle className="h-4 w-4 text-amber-500" />
             <AlertDescription className="ml-2">
-              <span className="font-semibold">Important Rule:</span> Cocktails must exist in the
-              cocktail DB - we don't want any dangerous experimental mixing!
+              <span className="font-semibold">Important Rule:</span> Cocktails
+              must exist in the cocktail DB - we don't want any dangerous
+              experimental mixing!
             </AlertDescription>
           </Alert>
         </CardContent>

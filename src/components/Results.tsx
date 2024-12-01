@@ -1,10 +1,5 @@
-import React from 'react';
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import React from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -20,7 +15,7 @@ export function Results({
   generatedName,
   improveSection,
   userFeedback,
-  setUserFeedback
+  setUserFeedback,
 }: ResultsProps) {
   return (
     <Card className="w-full max-w-2xl mx-auto">
@@ -44,10 +39,7 @@ export function Results({
         {/* Improvement Feedback Section */}
         {improveSection && (
           <div className="space-y-2">
-            <Label
-              htmlFor="improve"
-              className="flex items-center gap-2"
-            >
+            <Label htmlFor="improve" className="flex items-center gap-2">
               Improve
             </Label>
             <Textarea

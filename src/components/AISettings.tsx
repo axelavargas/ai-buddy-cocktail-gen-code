@@ -1,10 +1,5 @@
-import React from 'react';
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import React from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Select,
   SelectContent,
@@ -35,27 +30,30 @@ interface AISettingsProps {
   setConfiguration: React.Dispatch<React.SetStateAction<Configuration>>;
 }
 
-export function AISettings({ configuration, setConfiguration }: AISettingsProps) {
+export function AISettings({
+  configuration,
+  setConfiguration,
+}: AISettingsProps) {
   const handleApiKeyChange = (value: string) => {
-    setConfiguration(prev => ({
+    setConfiguration((prev) => ({
       ...prev,
-      apiKeyInput: value
+      apiKeyInput: value,
     }));
   };
 
   const handleAuthorize = () => {
-    setConfiguration(prev => ({
+    setConfiguration((prev) => ({
       ...prev,
-      apiKey: prev.apiKeyInput
+      apiKey: prev.apiKeyInput,
     }));
   };
 
   const handleTemperatureChange = (value: string) => {
     const temperature = parseFloat(value);
     if (temperature >= MIN_TEMPERATURE && temperature <= MAX_TEMPERATURE) {
-      setConfiguration(prev => ({
+      setConfiguration((prev) => ({
         ...prev,
-        temperature
+        temperature,
       }));
     }
   };
@@ -63,17 +61,17 @@ export function AISettings({ configuration, setConfiguration }: AISettingsProps)
   const handleMaxTokensChange = (value: string) => {
     const tokens = parseInt(value);
     if (tokens >= MIN_TOKENS && tokens <= MAX_TOKENS) {
-      setConfiguration(prev => ({
+      setConfiguration((prev) => ({
         ...prev,
-        maxTokens: tokens
+        maxTokens: tokens,
       }));
     }
   };
 
   const handleModelChange = (value: string) => {
-    setConfiguration(prev => ({
+    setConfiguration((prev) => ({
       ...prev,
-      model: value
+      model: value,
     }));
   };
 
@@ -144,10 +142,7 @@ export function AISettings({ configuration, setConfiguration }: AISettingsProps)
         {/* Model Selection */}
         <div className="space-y-2">
           <Label htmlFor="model">Model</Label>
-          <Select
-            value={configuration.model}
-            onValueChange={handleModelChange}
-          >
+          <Select value={configuration.model} onValueChange={handleModelChange}>
             <SelectTrigger id="model">
               <SelectValue placeholder="Select a model" />
             </SelectTrigger>
@@ -164,4 +159,3 @@ export function AISettings({ configuration, setConfiguration }: AISettingsProps)
     </Card>
   );
 }
-

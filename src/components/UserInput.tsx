@@ -1,21 +1,46 @@
-import { useState, useEffect, useCallback } from 'react';
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { useState, useEffect, useCallback } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 
 const DEFAULT_INGREDIENTS = [
-  "Vodka", "Gin", "Rum", "Tequila", "Whiskey", "Brandy", "Vermouth",
-  "Cointreau", "Kahlua", "Baileys", "Amaretto", "Champagne", "Wine",
-  "Beer", "Soda", "Juice", "Milk", "Cream", "Sugar", "Salt", "Pepper",
-  "Tabasco", "Worcestershire", "Bitters", "Egg", "Honey", "Syrup",
-  "Grenadine", "Mint", "Cinnamon", "Nutmeg", "Vanilla", "Coffee",
-  "Tea", "Ice", "Water",
+  "Vodka",
+  "Gin",
+  "Rum",
+  "Tequila",
+  "Whiskey",
+  "Brandy",
+  "Vermouth",
+  "Cointreau",
+  "Kahlua",
+  "Baileys",
+  "Amaretto",
+  "Champagne",
+  "Wine",
+  "Beer",
+  "Soda",
+  "Juice",
+  "Milk",
+  "Cream",
+  "Sugar",
+  "Salt",
+  "Pepper",
+  "Tabasco",
+  "Worcestershire",
+  "Bitters",
+  "Egg",
+  "Honey",
+  "Syrup",
+  "Grenadine",
+  "Mint",
+  "Cinnamon",
+  "Nutmeg",
+  "Vanilla",
+  "Coffee",
+  "Tea",
+  "Ice",
+  "Water",
 ];
 
 interface UserInputProps {
@@ -29,7 +54,7 @@ export function UserInput({
   mood,
   setMood,
   selectedIngredients,
-  setSelectedIngredients
+  setSelectedIngredients,
 }: UserInputProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [allIngredients, setAllIngredients] = useState(DEFAULT_INGREDIENTS);
@@ -40,42 +65,45 @@ export function UserInput({
     setHighlightedIndex(0); // Reset highlight to first item when search changes
   };
 
-  const addIngredient = useCallback((ingredient: string) => {
-    const trimmedIngredient = ingredient.trim();
-    if (!trimmedIngredient) return;
+  const addIngredient = useCallback(
+    (ingredient: string) => {
+      const trimmedIngredient = ingredient.trim();
+      if (!trimmedIngredient) return;
 
-    // If it's not in the all ingredients list, add it
-    if (!allIngredients.includes(trimmedIngredient)) {
-      setAllIngredients(prev => [...prev, trimmedIngredient]);
-    }
+      // If it's not in the all ingredients list, add it
+      if (!allIngredients.includes(trimmedIngredient)) {
+        setAllIngredients((prev) => [...prev, trimmedIngredient]);
+      }
 
-    // Add to selected ingredients if not already selected
-    if (!selectedIngredients.includes(trimmedIngredient)) {
-      setSelectedIngredients([...selectedIngredients, trimmedIngredient]);
-    }
-    setSearchTerm("");
-    setHighlightedIndex(-1);
-  }, [allIngredients, selectedIngredients, setSelectedIngredients]);
+      // Add to selected ingredients if not already selected
+      if (!selectedIngredients.includes(trimmedIngredient)) {
+        setSelectedIngredients([...selectedIngredients, trimmedIngredient]);
+      }
+      setSearchTerm("");
+      setHighlightedIndex(-1);
+    },
+    [allIngredients, selectedIngredients, setSelectedIngredients],
+  );
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     const filteredCount = filteredIngredients.length;
 
     switch (e.key) {
-      case 'ArrowDown':
+      case "ArrowDown":
         e.preventDefault();
-        setHighlightedIndex(prev =>
-          prev < filteredCount - 1 ? prev + 1 : 0
+        setHighlightedIndex((prev) =>
+          prev < filteredCount - 1 ? prev + 1 : 0,
         );
         break;
 
-      case 'ArrowUp':
+      case "ArrowUp":
         e.preventDefault();
-        setHighlightedIndex(prev =>
-          prev > 0 ? prev - 1 : filteredCount - 1
+        setHighlightedIndex((prev) =>
+          prev > 0 ? prev - 1 : filteredCount - 1,
         );
         break;
 
-      case 'Enter':
+      case "Enter":
         e.preventDefault();
         if (searchTerm.trim()) {
           // If there's a highlighted item, select it
@@ -84,7 +112,7 @@ export function UserInput({
           } else {
             // If there's an exact match, select it
             const exactMatch = filteredIngredients.find(
-              ing => ing.toLowerCase() === searchTerm.toLowerCase()
+              (ing) => ing.toLowerCase() === searchTerm.toLowerCase(),
             );
 
             if (exactMatch) {
@@ -97,14 +125,14 @@ export function UserInput({
         }
         break;
 
-      case 'Tab':
+      case "Tab":
         if (filteredIngredients.length === 1) {
           e.preventDefault();
           addIngredient(filteredIngredients[0]);
         }
         break;
 
-      case 'Escape':
+      case "Escape":
         setSearchTerm("");
         setHighlightedIndex(-1);
         break;
@@ -113,20 +141,26 @@ export function UserInput({
 
   const removeIngredient = (ingredientToRemove: string) => {
     setSelectedIngredients(
-      selectedIngredients.filter(ingredient => ingredient !== ingredientToRemove)
+      selectedIngredients.filter(
+        (ingredient) => ingredient !== ingredientToRemove,
+      ),
     );
   };
 
   // Filter ingredients based on search term
-  const filteredIngredients = allIngredients.filter(ingredient =>
-    ingredient.toLowerCase().includes(searchTerm.toLowerCase()) &&
-    !selectedIngredients.includes(ingredient)
+  const filteredIngredients = allIngredients.filter(
+    (ingredient) =>
+      ingredient.toLowerCase().includes(searchTerm.toLowerCase()) &&
+      !selectedIngredients.includes(ingredient),
   );
 
   // Auto-select when there's only one exact match
   useEffect(() => {
-    if (searchTerm && filteredIngredients.length === 1 &&
-      filteredIngredients[0].toLowerCase() === searchTerm.toLowerCase()) {
+    if (
+      searchTerm &&
+      filteredIngredients.length === 1 &&
+      filteredIngredients[0].toLowerCase() === searchTerm.toLowerCase()
+    ) {
       addIngredient(filteredIngredients[0]);
     }
   }, [searchTerm, filteredIngredients, addIngredient]);
@@ -163,8 +197,11 @@ export function UserInput({
                 {filteredIngredients.map((ingredient, index) => (
                   <div
                     key={ingredient}
-                    className={`px-3 py-2 cursor-pointer ${index === highlightedIndex ? 'bg-primary text-primary-foreground' : 'hover:bg-muted'
-                      }`}
+                    className={`px-3 py-2 cursor-pointer ${
+                      index === highlightedIndex
+                        ? "bg-primary text-primary-foreground"
+                        : "hover:bg-muted"
+                    }`}
                     onClick={() => addIngredient(ingredient)}
                   >
                     {ingredient}
