@@ -16,8 +16,25 @@ const createCocktailListWithIdAndName = (cocktails: Drink[]) => {
   return list;
 };
 
-function getMessages(mood: string, cocktails: Drink[]) {
+function getPrompts(mood: string, cocktails: Drink[]) {
   const MOOD_COCKTAIL_PROMPT = `From the following list recommend a cocktail for someone who is feeling ${mood}: ${createCocktailListWithIdAndName(cocktails)}`;
+  return [
+    {
+      role: "system",
+      content: SYSTEM_PROMPT,
+    },
+    {
+      role: "user",
+      content: MOOD_COCKTAIL_PROMPT,
+    },
+  ];
+}
+
+function getPromptsConsideringUserFeedback(
+  cocktailRecommendation: { idDrink: string; reason: string },
+  userFeedback: string,
+) {
+  const MOOD_COCKTAIL_PROMPT = `Considering the feedback "${userFeedback}" from the user, recommend a different cocktail. The previews recommendation: idDrink: ${cocktailRecommendation.idDrink} - idName: ${cocktailRecommendation.reason}`;
   return [
     {
       role: "system",
@@ -51,7 +68,7 @@ export async function getRecommendedCocktailV0(
       temperature: configuration.temperature,
       model: configuration.model,
       max_tokens: configuration.maxTokens,
-      messages: [...getMessages(mood, cocktails)],
+      messages: [...getPrompts(mood, cocktails)],
       response_format: {
         type: "json_object",
       },
@@ -85,13 +102,13 @@ export async function getRecommendedCocktailV1(
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${configuration.apiKey}`,
+        Authorization: `Bearer ${configuration.apiKey} `,
       },
       body: JSON.stringify({
         max_tokens: configuration.maxTokens, // deprecated
         temperature: configuration.temperature,
         model: configuration.model,
-        messages: [...getMessages(mood, cocktails)],
+        messages: [...getPrompts(mood, cocktails)],
         response_format: {
           type: "json_schema",
           json_schema: {
@@ -118,7 +135,80 @@ export async function getRecommendedCocktailV1(
     });
 
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      throw new Error(`HTTP error! status: ${response.status} `);
+    }
+
+    const data = await response.json();
+    const recomendation = JSON.parse(data.choices[0].message.content);
+
+    // Then fetch the recipe from the cocktail DB
+    const recipeDetails = await getCocktailRecipe(recomendation.idDrink);
+
+    return {
+      idDrink: recomendation.idDrink,
+      reason: recomendation.reason,
+      recipe: recipeDetails,
+    };
+  } catch (error) {
+    console.error("Error generating cocktail recipe:", error);
+    return { idDrink: "", reason: "", recipe: "" };
+  }
+}
+
+// get recommended with advanced usage of openai api, using structured outputs
+export async function getRecommendedCocktailV1WithUserFeedback(
+  mood: string,
+  cocktails: Drink[],
+  cocktailRecommendation: { idDrink: string; reason: string },
+  userFeedback: string,
+  configuration: Configuration,
+): Promise<{ idDrink: string; reason: string; recipe: string }> {
+  try {
+    // Call OpenAI API to generate the cocktail recipe
+    const response = await fetch(OPENAI_API_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${configuration.apiKey} `,
+      },
+      body: JSON.stringify({
+        max_tokens: configuration.maxTokens, // deprecated
+        temperature: configuration.temperature,
+        model: configuration.model,
+        messages: [
+          ...getPrompts(mood, cocktails),
+          ...getPromptsConsideringUserFeedback(
+            cocktailRecommendation,
+            userFeedback,
+          ),
+        ],
+        response_format: {
+          type: "json_schema",
+          json_schema: {
+            name: "cocktail_recommendation",
+            strict: true,
+            schema: {
+              type: "object",
+              properties: {
+                idDrink: {
+                  type: "string",
+                  description: "The id of the drink to recommend",
+                },
+                reason: {
+                  type: "string",
+                  description: "The reason for the recommendation",
+                },
+              },
+              required: ["idDrink", "reason"],
+              additionalProperties: false,
+            },
+          },
+        },
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status} `);
     }
 
     const data = await response.json();

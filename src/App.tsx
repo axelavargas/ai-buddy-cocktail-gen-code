@@ -1,18 +1,16 @@
 import { useState, useCallback } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
 import { Instructions } from "./components/Instructions";
 import { AISettings } from "./components/AISettings";
 import { UserInput } from "./components/UserInput";
-import { Configuration } from "./types";
+import { Configuration, Drink } from "./types";
 import { getCocktailListBasedOnIngredients } from "./api/cocktaildb";
 import {
   getRecommendedCocktailV0,
   getRecommendedCocktailV1,
+  getRecommendedCocktailV1WithUserFeedback,
 } from "./api/openai";
+import { Results } from "./components/Results";
 
 function App() {
   const DEFAULT_API_KEY =
@@ -34,6 +32,15 @@ function App() {
   const [generatedCocktail, setGeneratedCocktail] = useState("");
   const [loading, setLoading] = useState(false);
   const [showAISettings, setShowAISettings] = useState(false);
+  const [improveSection, setImproveSection] = useState(false);
+  const [userFeedback, setUserFeedback] = useState("");
+  const [cocktailRecommendation, setCocktailRecommendation] = useState({
+    idDrink: "",
+    reason: "",
+    recipe: "",
+  });
+
+  const [cocktails, setCocktails] = useState([] as Drink[]);
 
   const generateCocktail = useCallback(async () => {
     // simple validation inputs
@@ -43,30 +50,7 @@ function App() {
     }
     setLoading(true);
     try {
-      //Call CocktailDB to get the list of cocktails based on the ingredients
-      const cocktails =
-        await getCocktailListBasedOnIngredients(selectedIngredients);
-      console.log("Cocktails based on ingredients: ", cocktails);
-
-      //Call OpenAI to generate the cocktail recipe based on the mood and ingredients
-      const recommendedCocktail = await getRecommendedCocktailV0(
-        // const recommendedCocktail = await getRecommendedCocktailV0(
-        mood,
-        cocktails,
-        configuration,
-      );
-
-      console.log("Recommended cocktail: ", recommendedCocktail);
-
-      // TODO: Set the generated cocktail recipe to the state
-      setGeneratedCocktail(() => {
-        return `🍸 Howdy! \n
-        ${recommendedCocktail.reason} \n
-        Here is the recipe for your perfect cocktail: \n
-        ${recommendedCocktail.recipe}`;
-      });
-
-      // // Simulate API call for demo
+      // Simulate API call for demo
       // await new Promise(resolve => setTimeout(resolve, 2000));
       //
       // // Mock response -
@@ -93,6 +77,35 @@ function App() {
       //
       // setGeneratedCocktail(MockResponse);
       // console.log("Your perfect cocktail has been crafted!");
+
+      // Step 1: Get list of cocktails based on the selected ingredients
+      const cocktails =
+        await getCocktailListBasedOnIngredients(selectedIngredients);
+      console.log("Cocktails based on ingredients: ", cocktails);
+      setCocktails(cocktails);
+
+      //Step 2: Call OpenAI to generate the cocktail recipe based on the mood and ingredients
+      const recommendedCocktail = await getRecommendedCocktailV0(
+        // const recommendedCocktail = await getRecommendedCocktailV0(
+        mood,
+        cocktails,
+        configuration,
+      );
+
+      // Step 3: Lets store the recommended cocktail in the state
+      console.log("Recommended cocktail: ", recommendedCocktail);
+      setCocktailRecommendation(recommendedCocktail);
+
+      // Step 4: Show the recommended cocktail to the user in the UI
+      setGeneratedCocktail(() => {
+        return `🍸 Howdy! \n
+        ${recommendedCocktail.reason} \n
+        Here is the recipe for your perfect cocktail: \n
+        ${recommendedCocktail.recipe}`;
+      });
+
+      // Step 5: enable the improve section, so the user can provide feedback
+      setImproveSection(true);
     } catch (error) {
       console.error("Failed to generate cocktail recommendation", error);
     } finally {
@@ -104,6 +117,8 @@ function App() {
     setMood("");
     setSelectedIngredients([]);
     setGeneratedCocktail("");
+    setImproveSection(false);
+    setUserFeedback("");
     console.log("All inputs have been reset");
   }, []);
 
@@ -118,6 +133,49 @@ function App() {
       setShowAISettings(!showAISettings);
     }
   };
+
+  const generateCocktailWithUserFeedback = useCallback(async () => {
+    const feedback = userFeedback.trim(); // remove any leading/trailing spaces
+    if (!feedback) {
+      console.error("Please provide feedback to improve the results");
+      return;
+    }
+
+    if (
+      !cocktailRecommendation.idDrink ||
+      !cocktailRecommendation.reason ||
+      !cocktailRecommendation.recipe
+    ) {
+      console.error("No cocktail recommendation found to improve");
+      return;
+    }
+
+    // Call OpenAI to generate the cocktail recipe based on the previous mood and ingredients and the user feedback
+
+    // call openai.ts function with the user feedback
+    const updatedCocktailRecommendation =
+      await getRecommendedCocktailV1WithUserFeedback(
+        mood,
+        cocktails,
+        cocktailRecommendation,
+        feedback,
+        configuration,
+      );
+    // update the generated cocktail recipe with the updated recommendation
+    setCocktailRecommendation(updatedCocktailRecommendation);
+
+    // Set the generated cocktail recipe to the state
+    setGeneratedCocktail(() => {
+      return `🍸 Howdy! \n
+        ${updatedCocktailRecommendation.reason} \n
+        Here is the recipe for your perfect cocktail: \n
+        ${updatedCocktailRecommendation.recipe}`;
+    });
+    console.log(
+      "Updated cocktail recommendation: ",
+      updatedCocktailRecommendation,
+    );
+  }, [userFeedback, cocktailRecommendation, configuration, mood, cocktails]);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-muted p-6">
@@ -167,26 +225,13 @@ function App() {
             </div>
           </div>
 
-          <div className="space-y-6">
-            <Card className="w-full">
-              <CardHeader>
-                <CardTitle>Generated Cocktail</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="space-y-2">
-                  <Label htmlFor="cocktail">Recipe</Label>
-                  <ScrollArea className="h-[300px] w-full rounded-md border">
-                    <Textarea
-                      id="cocktail"
-                      value={generatedCocktail}
-                      className="min-h-[300px] resize-none border-0 focus-visible:ring-0"
-                      readOnly
-                    />
-                  </ScrollArea>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
+          <Results
+            generatedCocktail={generatedCocktail}
+            improveSection={improveSection}
+            userFeedback={userFeedback}
+            setUserFeedback={setUserFeedback}
+            onSubmitFeedback={generateCocktailWithUserFeedback}
+          />
         </div>
       </div>
     </div>
