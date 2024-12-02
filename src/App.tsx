@@ -13,8 +13,7 @@ import {
 import { Results } from "./components/Results";
 
 function App() {
-  const DEFAULT_API_KEY =
-    "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";
+  const DEFAULT_API_KEY = "";
   const DEFAULT_TEMPERATURE = 0.5;
   const DEFAULT_MAX_TOKENS = 256;
   const DEFAULT_MODEL = "gpt-4o-mini";
@@ -79,8 +78,9 @@ function App() {
       // console.log("Your perfect cocktail has been crafted!");
 
       // Step 1: Get list of cocktails based on the selected ingredients
-      const cocktails =
-        await getCocktailListBasedOnIngredients(selectedIngredients);
+      const cocktails = await getCocktailListBasedOnIngredients(
+        selectedIngredients
+      );
       console.log("Cocktails based on ingredients: ", cocktails);
       setCocktails(cocktails);
 
@@ -89,7 +89,7 @@ function App() {
         // const recommendedCocktail = await getRecommendedCocktailV0(
         mood,
         cocktails,
-        configuration,
+        configuration
       );
 
       // Step 3: Lets store the recommended cocktail in the state
@@ -159,7 +159,7 @@ function App() {
         cocktails,
         cocktailRecommendation,
         feedback,
-        configuration,
+        configuration
       );
     // update the generated cocktail recipe with the updated recommendation
     setCocktailRecommendation(updatedCocktailRecommendation);
@@ -173,7 +173,7 @@ function App() {
     });
     console.log(
       "Updated cocktail recommendation: ",
-      updatedCocktailRecommendation,
+      updatedCocktailRecommendation
     );
   }, [userFeedback, cocktailRecommendation, configuration, mood, cocktails]);
 
