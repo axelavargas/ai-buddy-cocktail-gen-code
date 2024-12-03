@@ -11,6 +11,7 @@ interface ResultsProps {
   userFeedback: string;
   setUserFeedback: React.Dispatch<React.SetStateAction<string>>;
   onSubmitFeedback: () => void;
+  loading: boolean;
 }
 
 export function Results({
@@ -19,6 +20,7 @@ export function Results({
   userFeedback,
   setUserFeedback,
   onSubmitFeedback,
+  loading,
 }: ResultsProps) {
   return (
     <div className="space-y-6">
@@ -60,14 +62,18 @@ export function Results({
                 placeholder="Enter your feedback to improve the results..."
                 className="min-h-[100px]"
               />
-
               <Button
                 size="lg"
                 variant="outline"
                 className="w-full"
                 onClick={onSubmitFeedback}
+                disabled={loading}
               >
-                Submit Feedback
+                {loading ? (
+                  <p>Submitting feedback...</p>
+                ) : (
+                  <p>Submit Feedback </p>
+                )}
               </Button>
             </div>
           </CardContent>

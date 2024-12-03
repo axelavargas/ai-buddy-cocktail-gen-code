@@ -13,8 +13,7 @@ import {
 import { Results } from "./components/Results";
 
 function App() {
-  const DEFAULT_API_KEY =
-    "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";
+  const DEFAULT_API_KEY = "";
   const DEFAULT_TEMPERATURE = 0.5;
   const DEFAULT_MAX_TOKENS = 256;
   const DEFAULT_MODEL = "gpt-4o-mini";
@@ -135,46 +134,53 @@ function App() {
   };
 
   const generateCocktailWithUserFeedback = useCallback(async () => {
-    const feedback = userFeedback.trim(); // remove any leading/trailing spaces
-    if (!feedback) {
-      console.error("Please provide feedback to improve the results");
-      return;
-    }
+    setLoading(true);
+    try {
+      const feedback = userFeedback.trim(); // remove any leading/trailing spaces
+      if (!feedback) {
+        console.error("Please provide feedback to improve the results");
+        return;
+      }
 
-    if (
-      !cocktailRecommendation.idDrink ||
-      !cocktailRecommendation.reason ||
-      !cocktailRecommendation.recipe
-    ) {
-      console.error("No cocktail recommendation found to improve");
-      return;
-    }
+      if (
+        !cocktailRecommendation.idDrink ||
+        !cocktailRecommendation.reason ||
+        !cocktailRecommendation.recipe
+      ) {
+        console.error("No cocktail recommendation found to improve");
+        return;
+      }
 
-    // Call OpenAI to generate the cocktail recipe based on the previous mood and ingredients and the user feedback
+      // Call OpenAI to generate the cocktail recipe based on the previous mood and ingredients and the user feedback
 
-    // call openai.ts function with the user feedback
-    const updatedCocktailRecommendation =
-      await getRecommendedCocktailV1WithUserFeedback(
-        mood,
-        cocktails,
-        cocktailRecommendation,
-        feedback,
-        configuration,
-      );
-    // update the generated cocktail recipe with the updated recommendation
-    setCocktailRecommendation(updatedCocktailRecommendation);
+      // call openai.ts function with the user feedback
+      const updatedCocktailRecommendation =
+        await getRecommendedCocktailV1WithUserFeedback(
+          mood,
+          cocktails,
+          cocktailRecommendation,
+          feedback,
+          configuration,
+        );
+      // update the generated cocktail recipe with the updated recommendation
+      setCocktailRecommendation(updatedCocktailRecommendation);
 
-    // Set the generated cocktail recipe to the state
-    setGeneratedCocktail(() => {
-      return `🍸 Howdy! \n
+      // Set the generated cocktail recipe to the state
+      setGeneratedCocktail(() => {
+        return `🍸 Howdy! \n
         ${updatedCocktailRecommendation.reason} \n
         Here is the recipe for your perfect cocktail: \n
         ${updatedCocktailRecommendation.recipe}`;
-    });
-    console.log(
-      "Updated cocktail recommendation: ",
-      updatedCocktailRecommendation,
-    );
+      });
+      console.log(
+        "Updated cocktail recommendation: ",
+        updatedCocktailRecommendation,
+      );
+    } catch (error) {
+      console.error("Failed to generate cocktail recommendation", error);
+    } finally {
+      setLoading(false);
+    }
   }, [userFeedback, cocktailRecommendation, configuration, mood, cocktails]);
 
   return (
@@ -231,6 +237,7 @@ function App() {
             userFeedback={userFeedback}
             setUserFeedback={setUserFeedback}
             onSubmitFeedback={generateCocktailWithUserFeedback}
+            loading={loading}
           />
         </div>
       </div>
