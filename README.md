@@ -50,7 +50,7 @@ sequenceDiagram
 
 ### 1. Setup (5 mins)
 
-- Fork this [repository in CodeSandbox ](https://codesandbox.io/p/github/axelavargas/ai-buddy-cocktail-gen-code/draft/fancy-wave?workspaceId=921f4a23-a967-4429-a46b-662f4b19f667)
+- Fork this [repository in CodeSandbox ](https://codesandbox.io/p/devbox/ai-buddy-cocktail-gen-j2qkgv)
 - Check that everything runs correctly
 - Understanding the project structure
 
