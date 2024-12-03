@@ -62,10 +62,23 @@ sequenceDiagram
 - How to search by ingredient
 - Handling responses
 
+Here's the corrected Markdown:
+
 #### OpenAI API
 
 - API key setup (https://platform.openai.com/settings/organization/api-keys)
 - Understanding chat completions
+
+    <details>
+    <summary>📝 How can we talk to the model?</summary>
+
+    OpenAI offers a chat completions API to use a large language model (llm) to generate text from a prompt. The key here is the fact that it is a chat, therefore a conversation with the model
+
+    ### For instance:
+
+    ![chatCompletions](https://github.com/user-attachments/assets/a372ac4f-24e6-466c-aeee-a271fabd67fc)
+</details>
+
 - Crafting effective prompts
     <details>
     <summary>📝 Detailed Guide: Crafting Effective Prompts</summary>
