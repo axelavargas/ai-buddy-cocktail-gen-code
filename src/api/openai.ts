@@ -42,24 +42,24 @@ function getPromptsConsideringUserFeedback(
   mood: string,
   cocktails: Drink[],
 ) {
-  // const MOOD_COCKTAIL_PROMPT = `Considering the feedback "${userFeedback}"
-  //   from the user, recommend a different cocktail.From the following list
-  // recommend a cocktail for someone who is feeling ${mood}: ${createCocktailListWithIdAndName(cocktails)}`;
-  //
-  // return [
-  //   {
-  //     role: "system",
-  //     content: SYSTEM_PROMPT,
-  //   },
-  //   {
-  //     role: "assistant",
-  //     content: previewsRecommendation,
-  //   },
-  //   {
-  //     role: "user",
-  //     content: MOOD_COCKTAIL_PROMPT,
-  //   },
-  // ];
+  const MOOD_COCKTAIL_PROMPT = `Considering the feedback "${userFeedback}"
+    from the user, recommend a different cocktail.From the following list
+  recommend a cocktail for someone who is feeling ${mood}: ${createCocktailListWithIdAndName(cocktails)}`;
+
+  return [
+    {
+      role: "system",
+      content: SYSTEM_PROMPT,
+    },
+    {
+      role: "assistant",
+      content: previewsRecommendation,
+    },
+    {
+      role: "user",
+      content: MOOD_COCKTAIL_PROMPT,
+    },
+  ];
 }
 
 // get recommended with basic usage of openai api

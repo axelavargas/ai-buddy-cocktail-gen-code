@@ -111,7 +111,7 @@ function App() {
       });
 
       // Step 5: enable the improve section, so the user can provide feedback
-      // setImproveSection(true);
+      setImproveSection(true);
     } catch (error) {
       console.error("Failed to generate cocktail recommendation", error);
     } finally {
