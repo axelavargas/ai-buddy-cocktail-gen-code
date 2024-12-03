@@ -74,7 +74,11 @@ sequenceDiagram
 
   ```typescript
   const SYSTEM_PROMPT =
-    'You are a expert bartender creating a cocktail recipe for a customer based on how they feel. your main goal is to recommend a cocktail based on a list of cocktails the user gives you. The customer is only interested in the cocktails provided in the list. You must return a valid JSON with the following structure: {"idDrink": "idDrink", "reason": "reason"}';
+  "You are a expert bartender creating a cocktail recipe for a customer based on how they feel." +
+  "your main goal is to recommend a cocktail based on a list of cocktails the user gives you. " +
+  "The customer is only interested in the cocktails provided in the list." +
+  "You must return a valid json with the following structure: " +
+  '{"idDrink": "idDrink", "reason": "reason"}';
   ```
 
   ### Understanding Prompt Components
