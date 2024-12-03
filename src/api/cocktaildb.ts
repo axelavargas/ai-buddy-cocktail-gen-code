@@ -54,7 +54,23 @@ async function searchByMultipleIngredients(
     const responses = await Promise.all(
       ingredients.map((ingredient) => searchByIngredient(ingredient)),
     );
-    return responses.flat();
+    console.log('responses', responses)
+    const drinkIdsInResponses = [];
+    for (let i = 0; i < ingredients.length; i++) {
+      drinkIdsInResponses[i] = responses[i].map((drink) => drink.idDrink);
+    }
+    console.log('drinkIdsInResponses', drinkIdsInResponses);
+
+    const intersection: string[] = [];
+    for (let i = 0; i < drinkIdsInResponses[0].length; i++) {
+      const drinkId: string = drinkIdsInResponses[0][i];
+      if (drinkIdsInResponses.every((ids) => ids.includes(drinkId))) {
+        intersection.push(drinkId);
+      }
+    }
+
+    console.log('intersection of drinks which contain both ingredients', intersection);
+    return responses.flat().filter((drink) => intersection.includes(drink.idDrink));
   } catch (error) {
     console.error("Error fetching multiple ingredients:", error);
     return [];
