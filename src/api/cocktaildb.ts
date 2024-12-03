@@ -31,11 +31,12 @@ export async function getCocktailListBasedOnIngredients(
   return [];
 }
 
-async function searchByIngredient(ingredient: string): Promise<Drink[]> {
+export async function searchByIngredient(ingredient: string): Promise<Drink[]> {
   try {
     const response = await fetch(
       `${API_BASE_URL}/filter.php?i=${encodeURIComponent(ingredient)}`,
     );
+    console.log('response', response)
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
@@ -47,7 +48,7 @@ async function searchByIngredient(ingredient: string): Promise<Drink[]> {
   }
 }
 
-async function searchByMultipleIngredients(
+export async function searchByMultipleIngredients(
   ingredients: string[],
 ): Promise<Drink[]> {
   try {
@@ -70,7 +71,11 @@ async function searchByMultipleIngredients(
     }
 
     console.log('intersection of drinks which contain both ingredients', intersection);
-    return responses.flat().filter((drink) => intersection.includes(drink.idDrink));
+    const results = responses.flat().filter((drink, index, self) =>
+      intersection.includes(drink.idDrink) && index === self.findIndex((d) => d.idDrink === drink.idDrink)
+    );
+    console.log('results  ', results)
+    return results;
   } catch (error) {
     console.error("Error fetching multiple ingredients:", error);
     return [];
