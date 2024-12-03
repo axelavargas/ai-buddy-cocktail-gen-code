@@ -35,6 +35,7 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [showAISettings, setShowAISettings] = useState(false);
   const [improveSection, setImproveSection] = useState(false);
+  const [previousUserFeedback, setPreviousUserFeedback] = useState("");
   const [userFeedback, setUserFeedback] = useState("");
   const [cocktails, setCocktails] = useState([] as Drink[]);
   const [cocktailRecommendation, setCocktailRecommendation] = useState({
@@ -46,7 +47,7 @@ function App() {
   // FUNCTION - Generate cocktail based on the mood and selected ingredients
   const generateCocktail = useCallback(async () => {
     // simple validation inputs
-    if (!mood || selectedIngredients.length === 0 || !configuration.apiKey) {
+    if (!mood || selectedIngredients.length === 0) {
       console.error("Please fill in all the required fields");
       return;
     }
@@ -83,6 +84,12 @@ function App() {
         await getCocktailListBasedOnIngredients(selectedIngredients);
       console.log("Cocktails based on ingredients: ", cocktails);
       setCocktails(cocktails);
+
+      // Step 2.0: Add your api key to the .env.local file and validate it is working
+      if (!configuration.apiKey) {
+        console.error("You need an apiKey to generate a cocktail recommendation");
+        return;
+      }
       //Step 2: Call OpenAI to generate the cocktail recipe based on the mood and ingredients
       const recommendedCocktail = await getRecommendedCocktailV0(
         // const recommendedCocktail = await getRecommendedCocktailV0(
@@ -136,7 +143,8 @@ function App() {
   const generateCocktailWithUserFeedback = useCallback(async () => {
     setLoading(true);
     try {
-      const feedback = userFeedback.trim(); // remove any leading/trailing spaces
+      const feedback = `${previousUserFeedback} ${userFeedback}`.trim(); // remove any leading/trailing spaces
+      setPreviousUserFeedback(feedback);
       if (!feedback) {
         console.error("Please provide feedback to improve the results");
         return;
