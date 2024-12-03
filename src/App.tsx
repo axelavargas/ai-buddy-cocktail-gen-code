@@ -13,11 +13,13 @@ import {
 import { Results } from "./components/Results";
 
 function App() {
-  const DEFAULT_API_KEY = "";
+  // CONSTANTS - Default values for the configuration
+  const DEFAULT_API_KEY = import.meta.env.VITE_OPEN_API_KEY || "";
   const DEFAULT_TEMPERATURE = 0.5;
   const DEFAULT_MAX_TOKENS = 256;
   const DEFAULT_MODEL = "gpt-4o-mini";
 
+  // OPENAI CONFIGURATION - State to store the configuration values
   const [configuration, setConfiguration] = useState<Configuration>({
     apiKey: DEFAULT_API_KEY,
     apiKeyInput: "",
@@ -26,6 +28,7 @@ function App() {
     model: DEFAULT_MODEL,
   });
 
+  // STATE - User inputs and generated cocktail
   const [mood, setMood] = useState("");
   const [selectedIngredients, setSelectedIngredients] = useState<string[]>([]);
   const [generatedCocktail, setGeneratedCocktail] = useState("");
@@ -33,14 +36,14 @@ function App() {
   const [showAISettings, setShowAISettings] = useState(false);
   const [improveSection, setImproveSection] = useState(false);
   const [userFeedback, setUserFeedback] = useState("");
+  const [cocktails, setCocktails] = useState([] as Drink[]);
   const [cocktailRecommendation, setCocktailRecommendation] = useState({
     idDrink: "",
     reason: "",
     recipe: "",
   });
 
-  const [cocktails, setCocktails] = useState([] as Drink[]);
-
+  // FUNCTION - Generate cocktail based on the mood and selected ingredients
   const generateCocktail = useCallback(async () => {
     // simple validation inputs
     if (!mood || selectedIngredients.length === 0 || !configuration.apiKey) {
@@ -50,61 +53,61 @@ function App() {
     setLoading(true);
     try {
       // Simulate API call for demo
-      // await new Promise(resolve => setTimeout(resolve, 2000));
-      //
-      // // Mock response -
-      // const MockResponse = `🍸 Mood Lifter Margarita
-      //   Perfect for your current mood, here's a refreshing twist on the classic Margarita.
-      //
-      //   Ingredients:
-      //   - 2 oz Tequila
-      //   - 1 oz Cointreau
-      //   - 1 oz Fresh lime juice
-      //   - Salt for rimming
-      //   - Ice
-      //   - Lime wheel for garnish
-      //
-      //   Instructions:
-      //   1. Rim a chilled glass with salt
-      //   2. Fill shaker with ice
-      //   3. Add tequila, Cointreau, and fresh lime juice
-      //   4. Shake well until thoroughly chilled
-      //   5. Strain into the prepared glass
-      //   6. Garnish with a lime wheel
-      //
-      //   Enjoy your perfectly crafted cocktail! 🍹`
-      //
-      // setGeneratedCocktail(MockResponse);
-      // console.log("Your perfect cocktail has been crafted!");
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+
+      // Mock response -
+      const MockResponse = `🍸 Mood Lifter Margarita
+        Perfect for your current mood, here's a refreshing twist on the classic Margarita.
+
+        Ingredients:
+        - 2 oz Tequila
+        - 1 oz Cointreau
+        - 1 oz Fresh lime juice
+        - Salt for rimming
+        - Ice
+        - Lime wheel for garnish
+
+        Instructions:
+        1. Rim a chilled glass with salt
+        2. Fill shaker with ice
+        3. Add tequila, Cointreau, and fresh lime juice
+        4. Shake well until thoroughly chilled
+        5. Strain into the prepared glass
+        6. Garnish with a lime wheel
+
+        Enjoy your perfectly crafted cocktail! 🍹`;
+
+      setGeneratedCocktail(MockResponse);
+      console.log("Your perfect cocktail has been crafted!");
 
       // Step 1: Get list of cocktails based on the selected ingredients
-      const cocktails =
-        await getCocktailListBasedOnIngredients(selectedIngredients);
-      console.log("Cocktails based on ingredients: ", cocktails);
-      setCocktails(cocktails);
+      // const cocktails =
+      //   await getCocktailListBasedOnIngredients(selectedIngredients);
+      // console.log("Cocktails based on ingredients: ", cocktails);
+      // setCocktails(cocktails);
 
       //Step 2: Call OpenAI to generate the cocktail recipe based on the mood and ingredients
-      const recommendedCocktail = await getRecommendedCocktailV0(
-        // const recommendedCocktail = await getRecommendedCocktailV0(
-        mood,
-        cocktails,
-        configuration,
-      );
+      // const recommendedCocktail = await getRecommendedCocktailV0(
+      //   // const recommendedCocktail = await getRecommendedCocktailV0(
+      //   mood,
+      //   cocktails,
+      //   configuration,
+      // );
 
       // Step 3: Lets store the recommended cocktail in the state
-      console.log("Recommended cocktail: ", recommendedCocktail);
-      setCocktailRecommendation(recommendedCocktail);
+      // console.log("Recommended cocktail: ", recommendedCocktail);
+      // setCocktailRecommendation(recommendedCocktail);
 
       // Step 4: Show the recommended cocktail to the user in the UI
-      setGeneratedCocktail(() => {
-        return `🍸 Howdy! \n
-        ${recommendedCocktail.reason} \n
-        Here is the recipe for your perfect cocktail: \n
-        ${recommendedCocktail.recipe}`;
-      });
+      // setGeneratedCocktail(() => {
+      //   return `🍸 Howdy! \n
+      //   ${recommendedCocktail.reason} \n
+      //   Here is the recipe for your perfect cocktail: \n
+      //   ${recommendedCocktail.recipe}`;
+      // });
 
-      // Step 5: enable the improve section, so the user can provide feedback
-      setImproveSection(true);
+      // // Step 5: enable the improve section, so the user can provide feedback
+      // setImproveSection(true);
     } catch (error) {
       console.error("Failed to generate cocktail recommendation", error);
     } finally {
@@ -112,6 +115,7 @@ function App() {
     }
   }, [configuration, mood, selectedIngredients]);
 
+  // FUNCTION - Reset all the user inputs
   const resetForm = useCallback(() => {
     setMood("");
     setSelectedIngredients([]);
@@ -121,6 +125,7 @@ function App() {
     console.log("All inputs have been reset");
   }, []);
 
+  // FUNCTION - Toggle the AI settings panel
   const toggleSettings = () => {
     // Check if the browser supports view transitions
     if (document.startViewTransition) {
@@ -133,6 +138,7 @@ function App() {
     }
   };
 
+  // FUNCTION - Generate cocktail based on the user feedback
   const generateCocktailWithUserFeedback = useCallback(async () => {
     setLoading(true);
     try {
@@ -183,6 +189,7 @@ function App() {
     }
   }, [userFeedback, cocktailRecommendation, configuration, mood, cocktails]);
 
+  // UI - Main App component
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-muted p-6">
       <div className="max-w-7xl mx-auto space-y-8">
