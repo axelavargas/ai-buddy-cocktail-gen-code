@@ -46,7 +46,7 @@ function App() {
   // FUNCTION - Generate cocktail based on the mood and selected ingredients
   const generateCocktail = useCallback(async () => {
     // simple validation inputs
-    if (!mood || selectedIngredients.length === 0 || !configuration.apiKey) {
+    if (!mood || selectedIngredients.length === 0) {
       console.error("Please fill in all the required fields");
       return;
     }
@@ -80,6 +80,11 @@ function App() {
       setGeneratedCocktail(MockResponse);
       console.log("Your perfect cocktail has been crafted!");
 
+      // Step 0: Add your api key to the .env.local file and validate it is working
+      // if (!configuration.apiKey) {
+      //   console.error("You need an apiKey to generate a cocktail recommendation");
+      //   return;
+      // }
       // Step 1: Get list of cocktails based on the selected ingredients
       // const cocktails =
       //   await getCocktailListBasedOnIngredients(selectedIngredients);
