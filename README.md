@@ -151,7 +151,6 @@ sequenceDiagram
 - Generating recommendations
 
 ## Project Structure
-
 ```
 src/
 ├── api/
@@ -166,45 +165,6 @@ src/
 ├── types/
 │   └── index.ts        # Type definitions
 └── App.tsx             # Main application
-```
-
-## API Integration Details
-
-### CocktailDB API
-
-```typescript
-const COCKTAIL_DB_BASE_URL = "www.thecocktaildb.com/api/json/v1/1";
-
-async function searchByIngredient(ingredient: string) {
-  const response = await fetch(
-    `${COCKTAIL_DB_BASE_URL}/search.php?i=${ingredient}`
-  );
-  return response.json();
-}
-```
-
-### OpenAI API
-
-```typescript
-import OpenAI from "openai";
-
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
-
-async function generateRecommendation(mood: string, cocktails: Cocktail[]) {
-  const completion = await openai.chat.completions.create({
-    model: "gpt-4",
-    messages: [
-      { role: "system", content: "You are a skilled bartender..." },
-      {
-        role: "user",
-        content: `Mood: ${mood}\nAvailable cocktails: ${cocktails}`,
-      },
-    ],
-  });
-  return completion.choices[0].message.content;
-}
 ```
 
 ## Best Practices
