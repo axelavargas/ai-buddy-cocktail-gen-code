@@ -11,29 +11,29 @@ const SYSTEM_PROMPT =
   '{"idDrink": "idDrink", "reason": "reason"}';
 
 const createCocktailListWithIdAndName = (cocktails: Drink[]) => {
-  const list = cocktails
-    .map(
-      (cocktail) =>
-        `idDrink: ${cocktail.idDrink} - nameDrink: ${cocktail.strDrink}`,
-    )
-    .join(", ");
-  return list;
+  // const list = cocktails
+  //   .map(
+  //     (cocktail) =>
+  //       `idDrink: ${cocktail.idDrink} - nameDrink: ${cocktail.strDrink}`,
+  //   )
+  //   .join(", ");
+  // return list;
 };
 
 function getPrompts(mood: string, cocktails: Drink[]) {
-  const MOOD_COCKTAIL_PROMPT = `From the following list
-  recommend a cocktail for someone who is feeling ${mood}: ${createCocktailListWithIdAndName(cocktails)}`;
-
-  return [
-    {
-      role: "system",
-      content: SYSTEM_PROMPT,
-    },
-    {
-      role: "user",
-      content: MOOD_COCKTAIL_PROMPT,
-    },
-  ];
+  // const MOOD_COCKTAIL_PROMPT = `From the following list
+  // recommend a cocktail for someone who is feeling ${mood}: ${createCocktailListWithIdAndName(cocktails)}`;
+  //
+  // return [
+  //   {
+  //     role: "system",
+  //     content: SYSTEM_PROMPT,
+  //   },
+  //   {
+  //     role: "user",
+  //     content: MOOD_COCKTAIL_PROMPT,
+  //   },
+  // ];
 }
 
 function getPromptsConsideringUserFeedback(
@@ -42,24 +42,24 @@ function getPromptsConsideringUserFeedback(
   mood: string,
   cocktails: Drink[],
 ) {
-  const MOOD_COCKTAIL_PROMPT = `Considering the feedback "${userFeedback}" 
-    from the user, recommend a different cocktail.From the following list
-  recommend a cocktail for someone who is feeling ${mood}: ${createCocktailListWithIdAndName(cocktails)}`;
-
-  return [
-    {
-      role: "system",
-      content: SYSTEM_PROMPT,
-    },
-    {
-      role: "assistant",
-      content: previewsRecommendation,
-    },
-    {
-      role: "user",
-      content: MOOD_COCKTAIL_PROMPT,
-    },
-  ];
+  // const MOOD_COCKTAIL_PROMPT = `Considering the feedback "${userFeedback}"
+  //   from the user, recommend a different cocktail.From the following list
+  // recommend a cocktail for someone who is feeling ${mood}: ${createCocktailListWithIdAndName(cocktails)}`;
+  //
+  // return [
+  //   {
+  //     role: "system",
+  //     content: SYSTEM_PROMPT,
+  //   },
+  //   {
+  //     role: "assistant",
+  //     content: previewsRecommendation,
+  //   },
+  //   {
+  //     role: "user",
+  //     content: MOOD_COCKTAIL_PROMPT,
+  //   },
+  // ];
 }
 
 // get recommended with basic usage of openai api
@@ -73,34 +73,34 @@ export async function getRecommendedCocktailV0(
   recipe: string;
 }> {
   // Step 1: basic call openai api to get a recommended cocktail
-  const response = await fetch(OPENAI_API_URL, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${configuration.apiKey}`,
-    },
-    body: JSON.stringify({
-      temperature: configuration.temperature,
-      model: configuration.model,
-      max_tokens: configuration.maxTokens,
-      messages: [...getPrompts(mood, cocktails)],
-      response_format: {
-        type: "json_object",
-      },
-    }),
-  });
+  // const response = await fetch(OPENAI_API_URL, {
+  //   method: "POST",
+  //   headers: {
+  //     "Content-Type": "application/json",
+  //     Authorization: `Bearer ${configuration.apiKey}`,
+  //   },
+  //   body: JSON.stringify({
+  //     temperature: configuration.temperature,
+  //     model: configuration.model,
+  //     max_tokens: configuration.maxTokens,
+  //     messages: [...getPrompts(mood, cocktails)],
+  //     response_format: {
+  //       type: "json_object",
+  //     },
+  //   }),
+  // });
   //
   // handle response
-  const data = await response.json();
-  const recomendation = JSON.parse(data.choices[0].message.content);
+  // const data = await response.json();
+  // const recomendation = JSON.parse(data.choices[0].message.content);
   // Then with the recommendation, fetch the recipe from the cocktail DB
-  const recipeDetails = await getCocktailRecipe(recomendation.idDrink);
+  // const recipeDetails = await getCocktailRecipe(recomendation.idDrink);
   // return the recommendation id, reason and recipe
-  return {
-    idDrink: recomendation.idDrink,
-    reason: recomendation.reason,
-    recipe: recipeDetails,
-  };
+  // return {
+  //   idDrink: recomendation.idDrink,
+  //   reason: recomendation.reason,
+  //   recipe: recipeDetails,
+  // };
 }
 
 // get recommended with advanced usage of openai api, using structured outputs

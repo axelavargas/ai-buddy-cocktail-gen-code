@@ -9,56 +9,56 @@ export interface APIResponse {
 export async function getCocktailListBasedOnIngredients(
   ingredients: string[],
 ): Promise<Drink[]> {
-  if (!ingredients.length) {
-    return [];
-  }
-  try {
-    const drinks =
-      ingredients.length === 1
-        ? await searchByIngredient(ingredients[0])
-        : await searchByMultipleIngredients(ingredients);
+  // if (!ingredients.length) {
+  //   return [];
+  // }
+  // try {
+  //   const drinks =
+  //     ingredients.length === 1
+  //       ? await searchByIngredient(ingredients[0])
+  //       : await searchByMultipleIngredients(ingredients);
 
-    // Remove duplicates based on idDrink
-    const uniqueDrinks = Array.from(
-      new Map(drinks.map((drink) => [drink.idDrink, drink])).values(),
-    );
+  // Remove duplicates based on idDrink
+  // const uniqueDrinks = Array.from(
+  //   new Map(drinks.map((drink) => [drink.idDrink, drink])).values(),
+  // );
 
-    return uniqueDrinks;
-  } catch (error) {
-    console.error("Error fetching cocktails:", error);
-    return [];
-  }
-  // return [];
+  //   return uniqueDrinks;
+  // } catch (error) {
+  //   console.error("Error fetching cocktails:", error);
+  //   return [];
+  // }
+  return [];
 }
 
 async function searchByIngredient(ingredient: string): Promise<Drink[]> {
-  try {
-    const response = await fetch(
-      `${API_BASE_URL}/filter.php?i=${encodeURIComponent(ingredient)}`,
-    );
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    const data: APIResponse = await response.json();
-    return data.drinks || [];
-  } catch (error) {
-    console.error(`Error fetching drinks for ${ingredient}:`, error);
-    return [];
-  }
+  // try {
+  //   const response = await fetch(
+  //     `${API_BASE_URL}/filter.php?i=${encodeURIComponent(ingredient)}`,
+  //   );
+  //   if (!response.ok) {
+  //     throw new Error(`HTTP error! status: ${response.status}`);
+  //   }
+  //   const data: APIResponse = await response.json();
+  //   return data.drinks || [];
+  // } catch (error) {
+  //   console.error(`Error fetching drinks for ${ingredient}:`, error);
+  //   return [];
+  // }
 }
 
 async function searchByMultipleIngredients(
   ingredients: string[],
 ): Promise<Drink[]> {
-  try {
-    const responses = await Promise.all(
-      ingredients.map((ingredient) => searchByIngredient(ingredient)),
-    );
-    return responses.flat();
-  } catch (error) {
-    console.error("Error fetching multiple ingredients:", error);
-    return [];
-  }
+  // try {
+  //   const responses = await Promise.all(
+  //     ingredients.map((ingredient) => searchByIngredient(ingredient)),
+  //   );
+  //   return responses.flat();
+  // } catch (error) {
+  //   console.error("Error fetching multiple ingredients:", error);
+  //   return [];
+  // }
 }
 
 export async function getCocktailRecipe(idDrink: string): Promise<string> {
