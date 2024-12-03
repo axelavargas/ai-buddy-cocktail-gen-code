@@ -53,61 +53,55 @@ function App() {
     setLoading(true);
     try {
       // Simulate API call for demo
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-
+      // await new Promise((resolve) => setTimeout(resolve, 2000));
       // Mock response -
-      const MockResponse = `🍸 Mood Lifter Margarita
-        Perfect for your current mood, here's a refreshing twist on the classic Margarita.
-
-        Ingredients:
-        - 2 oz Tequila
-        - 1 oz Cointreau
-        - 1 oz Fresh lime juice
-        - Salt for rimming
-        - Ice
-        - Lime wheel for garnish
-
-        Instructions:
-        1. Rim a chilled glass with salt
-        2. Fill shaker with ice
-        3. Add tequila, Cointreau, and fresh lime juice
-        4. Shake well until thoroughly chilled
-        5. Strain into the prepared glass
-        6. Garnish with a lime wheel
-
-        Enjoy your perfectly crafted cocktail! 🍹`;
-
-      setGeneratedCocktail(MockResponse);
-      console.log("Your perfect cocktail has been crafted!");
-
+      // const MockResponse = `🍸 Mood Lifter Margarita
+      //   Perfect for your current mood, here's a refreshing twist on the classic Margarita.
+      //
+      //   Ingredients:
+      //   - 2 oz Tequila
+      //   - 1 oz Cointreau
+      //   - 1 oz Fresh lime juice
+      //   - Salt for rimming
+      //   - Ice
+      //   - Lime wheel for garnish
+      //
+      //   Instructions:
+      //   1. Rim a chilled glass with salt
+      //   2. Fill shaker with ice
+      //   3. Add tequila, Cointreau, and fresh lime juice
+      //   4. Shake well until thoroughly chilled
+      //   5. Strain into the prepared glass
+      //   6. Garnish with a lime wheel
+      //
+      //   Enjoy your perfectly crafted cocktail! 🍹`;
+      //
+      // setGeneratedCocktail(MockResponse);
+      // console.log("Your perfect cocktail has been crafted!");
       // Step 1: Get list of cocktails based on the selected ingredients
-      // const cocktails =
-      //   await getCocktailListBasedOnIngredients(selectedIngredients);
-      // console.log("Cocktails based on ingredients: ", cocktails);
-      // setCocktails(cocktails);
-
+      const cocktails =
+        await getCocktailListBasedOnIngredients(selectedIngredients);
+      console.log("Cocktails based on ingredients: ", cocktails);
+      setCocktails(cocktails);
       //Step 2: Call OpenAI to generate the cocktail recipe based on the mood and ingredients
-      // const recommendedCocktail = await getRecommendedCocktailV0(
-      //   // const recommendedCocktail = await getRecommendedCocktailV0(
-      //   mood,
-      //   cocktails,
-      //   configuration,
-      // );
-
+      const recommendedCocktail = await getRecommendedCocktailV0(
+        // const recommendedCocktail = await getRecommendedCocktailV0(
+        mood,
+        cocktails,
+        configuration,
+      );
       // Step 3: Lets store the recommended cocktail in the state
-      // console.log("Recommended cocktail: ", recommendedCocktail);
-      // setCocktailRecommendation(recommendedCocktail);
-
+      console.log("Recommended cocktail: ", recommendedCocktail);
+      setCocktailRecommendation(recommendedCocktail);
       // Step 4: Show the recommended cocktail to the user in the UI
-      // setGeneratedCocktail(() => {
-      //   return `🍸 Howdy! \n
-      //   ${recommendedCocktail.reason} \n
-      //   Here is the recipe for your perfect cocktail: \n
-      //   ${recommendedCocktail.recipe}`;
-      // });
-
+      setGeneratedCocktail(() => {
+        return `🍸 Howdy! \n
+        ${recommendedCocktail.reason} \n
+        Here is the recipe for your perfect cocktail: \n
+        ${recommendedCocktail.recipe}`;
+      });
       // Step 5: enable the improve section, so the user can provide feedback
-      // setImproveSection(true);
+      setImproveSection(true);
     } catch (error) {
       console.error("Failed to generate cocktail recommendation", error);
     } finally {
