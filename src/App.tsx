@@ -80,18 +80,18 @@ function App() {
       setGeneratedCocktail(MockResponse);
       console.log("Your perfect cocktail has been crafted!");
 
-      // Step 0: Add your api key to the .env.local file and validate it is working
-      // if (!configuration.apiKey) {
-      //   console.error("You need an apiKey to generate a cocktail recommendation");
-      //   return;
-      // }
       // Step 1: Get list of cocktails based on the selected ingredients
-      // const cocktails =
-      //   await getCocktailListBasedOnIngredients(selectedIngredients);
-      // console.log("Cocktails based on ingredients: ", cocktails);
-      // setCocktails(cocktails);
+      const cocktails =
+      await getCocktailListBasedOnIngredients(selectedIngredients);
+      console.log("Cocktails based on ingredients: ", cocktails);
+      setCocktails(cocktails);
 
-      //Step 2: Call OpenAI to generate the cocktail recipe based on the mood and ingredients
+      // Step 2.1: Add your api key to the .env.local file and validate it is working
+      if (!configuration.apiKey) {
+        console.error("You need an apiKey to generate a cocktail recommendation");
+        return;
+      }
+      //Step 2.2: Call OpenAI to generate the cocktail recipe based on the mood and ingredients
       // const recommendedCocktail = await getRecommendedCocktailV0(
       //   // const recommendedCocktail = await getRecommendedCocktailV0(
       //   mood,
