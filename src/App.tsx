@@ -77,8 +77,8 @@ function App() {
 
         Enjoy your perfectly crafted cocktail! 🍹`;
 
-      setGeneratedCocktail(MockResponse);
-      console.log("Your perfect cocktail has been crafted!");
+      // setGeneratedCocktail(MockResponse);
+      // console.log("Your perfect cocktail has been crafted!");
 
       // Step 1: Get list of cocktails based on the selected ingredients
       const cocktails =
@@ -92,24 +92,23 @@ function App() {
         return;
       }
       //Step 2.2: Call OpenAI to generate the cocktail recipe based on the mood and ingredients
-      // const recommendedCocktail = await getRecommendedCocktailV0(
-      //   // const recommendedCocktail = await getRecommendedCocktailV0(
-      //   mood,
-      //   cocktails,
-      //   configuration,
-      // );
+      const recommendedCocktail = await getRecommendedCocktailV0(
+        mood,
+        cocktails,
+        configuration,
+      );
 
       // Step 3: Lets store the recommended cocktail in the state
-      // console.log("Recommended cocktail: ", recommendedCocktail);
-      // setCocktailRecommendation(recommendedCocktail);
+      console.log("Recommended cocktail: ", recommendedCocktail);
+      setCocktailRecommendation(recommendedCocktail);
 
       // Step 4: Show the recommended cocktail to the user in the UI
-      // setGeneratedCocktail(() => {
-      //   return `🍸 Howdy! \n
-      //   ${recommendedCocktail.reason} \n
-      //   Here is the recipe for your perfect cocktail: \n
-      //   ${recommendedCocktail.recipe}`;
-      // });
+      setGeneratedCocktail(() => {
+        return `🍸 Howdy! \n
+        ${recommendedCocktail.reason} \n
+        Here is the recipe for your perfect cocktail: \n
+        ${recommendedCocktail.recipe}`;
+      });
 
       // Step 5: enable the improve section, so the user can provide feedback
       // setImproveSection(true);
