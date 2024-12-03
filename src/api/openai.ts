@@ -22,7 +22,7 @@ const createCocktailListWithIdAndName = (cocktails: Drink[]) => {
 
 function getPrompts(mood: string, cocktails: Drink[]) {
   const MOOD_COCKTAIL_PROMPT = `From the following list
-  // recommend a cocktail for someone who is feeling ${mood}: ${createCocktailListWithIdAndName(cocktails)}`;
+  recommend a cocktail for someone who is feeling ${mood}: ${createCocktailListWithIdAndName(cocktails)}`;
 
   return [
     {

@@ -18,10 +18,10 @@ export async function getCocktailListBasedOnIngredients(
         ? await searchByIngredient(ingredients[0])
         : await searchByMultipleIngredients(ingredients);
 
-  // Remove duplicates based on idDrink
-  const uniqueDrinks = Array.from(
-    new Map(drinks.map((drink) => [drink.idDrink, drink])).values(),
-  );
+    // Remove duplicates based on idDrink
+    const uniqueDrinks = Array.from(
+      new Map(drinks.map((drink) => [drink.idDrink, drink])).values(),
+    );
 
     return uniqueDrinks;
   } catch (error) {
@@ -36,7 +36,6 @@ export async function searchByIngredient(ingredient: string): Promise<Drink[]> {
     const response = await fetch(
       `${API_BASE_URL}/filter.php?i=${encodeURIComponent(ingredient)}`,
     );
-    console.log('response', response)
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
@@ -55,12 +54,10 @@ export async function searchByMultipleIngredients(
     const responses = await Promise.all(
       ingredients.map((ingredient) => searchByIngredient(ingredient)),
     );
-    console.log('responses', responses)
     const drinkIdsInResponses = [];
     for (let i = 0; i < ingredients.length; i++) {
       drinkIdsInResponses[i] = responses[i].map((drink) => drink.idDrink);
     }
-    console.log('drinkIdsInResponses', drinkIdsInResponses);
 
     const intersection: string[] = [];
     for (let i = 0; i < drinkIdsInResponses[0].length; i++) {
@@ -69,13 +66,10 @@ export async function searchByMultipleIngredients(
         intersection.push(drinkId);
       }
     }
-
     console.log('intersection of drinks which contain both ingredients', intersection);
-    const results = responses.flat().filter((drink, index, self) =>
+    return responses.flat().filter((drink, index, self) =>
       intersection.includes(drink.idDrink) && index === self.findIndex((d) => d.idDrink === drink.idDrink)
     );
-    console.log('results  ', results)
-    return results;
   } catch (error) {
     console.error("Error fetching multiple ingredients:", error);
     return [];
