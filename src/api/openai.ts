@@ -4,37 +4,46 @@ import { getCocktailRecipe } from "./cocktaildb";
 const OPENAI_API_URL = "https://api.openai.com/v1/chat/completions";
 
 const SYSTEM_PROMPT =
-  'You are a expert bartender creating a cocktail recipe for a customer based on how they feel. your main goal is to recommend a cocktail based on a list of cocktails the user gives you. The customer is only interested in the cocktails provided in the list. You must return a valid json with the following structure: {"idDrink": "idDrink", "reason": "reason"}';
+  "You are a expert bartender creating a cocktail recipe for a customer based on how they feel." +
+  "your main goal is to recommend a cocktail based on a list of cocktails the user gives you. " +
+  "The customer is only interested in the cocktails provided in the list." +
+  "You must return a valid json with the following structure: " +
+  '{"idDrink": "idDrink", "reason": "reason"}';
 
 const createCocktailListWithIdAndName = (cocktails: Drink[]) => {
-  const list = cocktails
-    .map(
-      (cocktail) =>
-        `idDrink: ${cocktail.idDrink} - nameDrink: ${cocktail.strDrink}`,
-    )
-    .join(", ");
-  return list;
+  // const list = cocktails
+  //   .map(
+  //     (cocktail) =>
+  //       `idDrink: ${cocktail.idDrink} - nameDrink: ${cocktail.strDrink}`
+  //   )
+  //   .join(", ");
+  // return list;
 };
 
 function getPrompts(mood: string, cocktails: Drink[]) {
-  const MOOD_COCKTAIL_PROMPT = `From the following list recommend a cocktail for someone who is feeling ${mood}: ${createCocktailListWithIdAndName(cocktails)}`;
-  return [
-    {
-      role: "system",
-      content: SYSTEM_PROMPT,
-    },
-    {
-      role: "user",
-      content: MOOD_COCKTAIL_PROMPT,
-    },
-  ];
+  // const MOOD_COCKTAIL_PROMPT = `From the following list
+  // recommend a cocktail for someone who is feeling ${mood}: ${createCocktailListWithIdAndName(cocktails)}`;
+  //
+  // return [
+  //   {
+  //     role: "system",
+  //     content: SYSTEM_PROMPT,
+  //   },
+  //   {
+  //     role: "user",
+  //     content: MOOD_COCKTAIL_PROMPT,
+  //   },
+  // ];
 }
 
 function getPromptsConsideringUserFeedback(
   cocktailRecommendation: { idDrink: string; reason: string },
   userFeedback: string,
 ) {
-  const MOOD_COCKTAIL_PROMPT = `Considering the feedback "${userFeedback}" from the user, recommend a different cocktail. The previews recommendation: idDrink: ${cocktailRecommendation.idDrink} - idName: ${cocktailRecommendation.reason}`;
+  const MOOD_COCKTAIL_PROMPT = `Considering the feedback "${userFeedback}" 
+    from the user, recommend a different cocktail. 
+    The previews recommendation: idDrink: ${cocktailRecommendation.idDrink} - idName: ${cocktailRecommendation.reason}`;
+
   return [
     {
       role: "system",
@@ -57,37 +66,35 @@ export async function getRecommendedCocktailV0(
   reason: string;
   recipe: string;
 }> {
-  // basic call openai api to get a recommended cocktail
-  const response = await fetch(OPENAI_API_URL, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${configuration.apiKey}`,
-    },
-    body: JSON.stringify({
-      temperature: configuration.temperature,
-      model: configuration.model,
-      max_tokens: configuration.maxTokens,
-      messages: [...getPrompts(mood, cocktails)],
-      response_format: {
-        type: "json_object",
-      },
-    }),
-  });
-
+  // Step 1: basic call openai api to get a recommended cocktail
+  // const response = await fetch(OPENAI_API_URL, {
+  //   method: "POST",
+  //   headers: {
+  //     "Content-Type": "application/json",
+  //     Authorization: `Bearer ${configuration.apiKey}`,
+  //   },
+  //   body: JSON.stringify({
+  //     temperature: configuration.temperature,
+  //     model: configuration.model,
+  //     max_tokens: configuration.maxTokens,
+  //     messages: [...getPrompts(mood, cocktails)],
+  //     response_format: {
+  //       type: "json_object",
+  //     },
+  //   }),
+  // });
+  //
   // handle response
-  const data = await response.json();
-  const recomendation = JSON.parse(data.choices[0].message.content);
-
+  // const data = await response.json();
+  // const recomendation = JSON.parse(data.choices[0].message.content);
   // Then with the recommendation, fetch the recipe from the cocktail DB
-  const recipeDetails = await getCocktailRecipe(recomendation.idDrink);
-
+  // const recipeDetails = await getCocktailRecipe(recomendation.idDrink);
   // return the recommendation id, reason and recipe
-  return {
-    idDrink: recomendation.idDrink,
-    reason: recomendation.reason,
-    recipe: recipeDetails,
-  };
+  // return {
+  //   idDrink: recomendation.idDrink,
+  //   reason: recomendation.reason,
+  //   recipe: recipeDetails,
+  // };
 }
 
 // get recommended with advanced usage of openai api, using structured outputs
