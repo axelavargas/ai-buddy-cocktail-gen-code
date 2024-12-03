@@ -35,7 +35,7 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [showAISettings, setShowAISettings] = useState(false);
   const [improveSection, setImproveSection] = useState(false);
-  const [previousUserFeedback, setPreviousUserFeedback] = useState("");
+  const [previousUserFeedback, setPreviousUserFeedback] = useState([]);
   const [userFeedback, setUserFeedback] = useState("");
   const [cocktails, setCocktails] = useState([] as Drink[]);
   const [cocktailRecommendation, setCocktailRecommendation] = useState({
@@ -143,8 +143,9 @@ function App() {
   const generateCocktailWithUserFeedback = useCallback(async () => {
     setLoading(true);
     try {
-      const feedback = `${previousUserFeedback} ${userFeedback}`.trim(); // remove any leading/trailing spaces
-      setPreviousUserFeedback(feedback);
+      const feedbacks = [...previousUserFeedback, userFeedback.trim()]; // remove any leading/trailing spaces
+      const feedback = feedbacks.join('. ');
+      setPreviousUserFeedback(feedbacks);
       if (!feedback) {
         console.error("Please provide feedback to improve the results");
         return;
