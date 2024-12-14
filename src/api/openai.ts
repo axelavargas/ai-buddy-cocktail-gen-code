@@ -106,7 +106,6 @@ export async function getRecommendedCocktailV0(
       reason: recomendation.reason,
       recipe: recipeDetails,
     };
-
   } catch (error) {
     console.error("Error generating cocktail recipe:", error);
     errorRecipe = `Error generating cocktail recipe: ${error?.message || 'unknown error'}`;
