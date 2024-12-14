@@ -31,7 +31,7 @@ export async function getCocktailListBasedOnIngredients(
   return [];
 }
 
-async function searchByIngredient(ingredient: string): Promise<Drink[]> {
+export async function searchByIngredient(ingredient: string): Promise<Drink[]> {
   try {
     const response = await fetch(
       `${API_BASE_URL}/filter.php?i=${encodeURIComponent(ingredient)}`,
@@ -47,7 +47,7 @@ async function searchByIngredient(ingredient: string): Promise<Drink[]> {
   }
 }
 
-async function searchByMultipleIngredients(
+export async function searchByMultipleIngredients(
   ingredients: string[],
 ): Promise<Drink[]> {
   try {
