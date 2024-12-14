@@ -103,8 +103,7 @@ function App() {
       // Step 4: Show the recommended cocktail to the user in the UI
       setGeneratedCocktail(() => {
         return `🍸 Howdy! \n
-        ${recommendedCocktail.reason} \n
-        Here is the recipe for your perfect cocktail: \n
+        ${recommendedCocktail.reason ? recommendedCocktail.reason : "Here is the recipe for your perfect cocktail:"} \n
         ${recommendedCocktail.recipe}`;
       });
       // Step 5: enable the improve section, so the user can provide feedback
@@ -168,8 +167,7 @@ function App() {
       // Set the generated cocktail recipe to the state
       setGeneratedCocktail(() => {
         return `🍸 Howdy! \n
-        ${updatedCocktailRecommendation.reason} \n
-        Here is the recipe for your perfect cocktail: \n
+        ${updatedCocktailRecommendation.reason ? updatedCocktailRecommendation.reason : 'Here is the recipe for your perfect cocktail'} \n
         ${updatedCocktailRecommendation.recipe}`;
       });
       console.log(
