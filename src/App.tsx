@@ -2,7 +2,7 @@ import { useState, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Instructions } from "./components/Instructions";
 import { AISettings } from "./components/AISettings";
-import { UserInput } from "./components/UserInput";
+import { DEFAULT_INGREDIENTS, UserInput } from "./components/UserInput";
 import { Configuration, Drink } from "./types";
 import { getCocktailListBasedOnIngredients } from "./api/cocktaildb";
 import {
@@ -30,7 +30,7 @@ function App() {
 
   // STATE - User inputs and generated cocktail
   const [mood, setMood] = useState("");
-  const [selectedIngredients, setSelectedIngredients] = useState<string[]>([]);
+  const [selectedIngredients, setSelectedIngredients] = useState<string[]>(DEFAULT_INGREDIENTS);
   const [generatedCocktail, setGeneratedCocktail] = useState("");
   const [loading, setLoading] = useState(false);
   const [showAISettings, setShowAISettings] = useState(false);
