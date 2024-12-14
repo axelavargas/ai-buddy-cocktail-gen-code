@@ -34,8 +34,8 @@ describe('searchByMultipleIngredients', () => {
 
     const result = await searchByMultipleIngredients(['coffee', 'rum']);
     const results = result.map((drink) => drink.strDrink);
-    expect(results).toEqual(['Drink1', 'Drink2', 'Drink4', 'Drink5', 'Drink6', 'Drink3']);
-    expect(result.length).toEqual(6);
+    expect(results).toEqual(['Drink1', 'Drink2', 'Drink4', 'Drink5', 'Drink6', 'Drink2', 'Drink3', 'Drink5']);
+    expect(result.length).toEqual(8);
   });
 
   it('should handle errors gracefully', async () => {

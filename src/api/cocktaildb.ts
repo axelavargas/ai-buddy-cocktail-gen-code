@@ -54,11 +54,7 @@ export async function searchByMultipleIngredients(
     const responses = await Promise.all(
       ingredients.map((ingredient) => searchByIngredient(ingredient)),
     );
-    const unionOfDrinks = responses.flat();
-    // return the drinks without duplicates
-    return Array.from(
-      new Map(unionOfDrinks.map((drink) => [drink.idDrink, drink])).values(),
-    );
+    return responses.flat();
   } catch (error) {
     console.error("Error fetching multiple ingredients:", error);
     return [];
