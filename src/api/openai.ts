@@ -72,34 +72,48 @@ export async function getRecommendedCocktailV0(
   reason: string;
   recipe: string;
 }> {
-  // Step 1: basic call openai api to get a recommended cocktail
-  const response = await fetch(OPENAI_API_URL, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${configuration.apiKey}`,
-    },
-    body: JSON.stringify({
-      temperature: configuration.temperature,
-      model: configuration.model,
-      max_tokens: configuration.maxTokens,
-      messages: [...getPrompts(mood, cocktails)],
-      response_format: {
-        type: "json_object",
+  let errorRecipe = '';
+  try {
+    // Step 1: basic call openai api to get a recommended cocktail
+    const response = await fetch(OPENAI_API_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${configuration.apiKey}`,
       },
-    }),
-  });
-  //
-  // handle response
-  const data = await response.json();
-  const recomendation = JSON.parse(data.choices[0].message.content);
-  // Then with the recommendation, fetch the recipe from the cocktail DB
-  const recipeDetails = await getCocktailRecipe(recomendation.idDrink);
-  // return the recommendation id, reason and recipe
+      body: JSON.stringify({
+        temperature: configuration.temperature,
+        model: configuration.model,
+        max_tokens: configuration.maxTokens,
+        messages: [...getPrompts(mood, cocktails)],
+        response_format: {
+          type: "json_object",
+        },
+      }),
+    });
+    //
+    // handle response
+    const data = await response.json();
+    if (data.error) {
+      throw new Error(data.error?.message || 'Unknown response from OpenAI');
+    }
+    const recomendation = JSON.parse(data.choices[0].message.content);
+    // Then with the recommendation, fetch the recipe from the cocktail DB
+    const recipeDetails = await getCocktailRecipe(recomendation.idDrink);
+    // return the recommendation id, reason and recipe
+    return {
+      idDrink: recomendation.idDrink,
+      reason: recomendation.reason,
+      recipe: recipeDetails,
+    };
+  } catch (error) {
+    console.error("Error generating cocktail recipe:", error);
+    errorRecipe = `Error generating cocktail recipe: ${error?.message || 'unknown error'}`;
+  }
   return {
-    idDrink: recomendation.idDrink,
-    reason: recomendation.reason,
-    recipe: recipeDetails,
+    idDrink: '1',
+    reason: 'The bartender was tired.',
+    recipe: errorRecipe,
   };
 }
 
